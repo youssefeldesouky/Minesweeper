@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import rospy
 from sensor_msgs.msg import Imu
+from std_msgs.msg import Header
 from geometry_msgs.msg import Quaternion
 import math
 
@@ -13,7 +14,7 @@ class Converter(object):
         # self._offset_list = [float(x) for x in str.split(self._offset_str, ', ')]
         self._offset_q = self.calculate_offset(self._offset_str)
         self._sub = rospy.Subscriber("/android/imu", Imu, self.e2q_cb)
-        self._pub = rospy.Publisher("/imu", Imu, queue_size=10)
+        self._pub = rospy.Publisher("imu/data", Imu, queue_size=10)
         self._rate = rospy.Rate(50)
         self._r_orientation = Quaternion()
         self._p_orientation = Quaternion()
@@ -48,6 +49,7 @@ class Converter(object):
             self._p_orientation.y = self._offset_q.w * self._r_orientation.y - self._offset_q.x * self._r_orientation.z + self._offset_q.y * self._r_orientation.w + self._offset_q.z * self._r_orientation.x
             self._p_orientation.z = self._offset_q.w * self._r_orientation.z + self._offset_q.x * self._r_orientation.y - self._offset_q.y * self._r_orientation.x + self._offset_q.z * self._r_orientation.w
             self._imu_data.orientation = self._p_orientation
+            self._imu_data.header.frame_id = "imu_link"
             self._pub.publish(self._imu_data)
             self._rate.sleep()
 

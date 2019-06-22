@@ -1,16 +1,15 @@
 <launch>
-  <arg name="port" default="/dev/ttyACM0"/>
-  <!--<arg name="offset" default="[0.0, 0.0, 0.0]"/>-->
+  <arg name="port" default="/dev/input/js2"/>
+  <arg name="offset" default="[0.0, 0.0, 0.0]"/>
   <node pkg="minesweeper_base" type="minesweeper_base_node" name="minesweeper_node" output="screen">
         <rosparam subst_value="true">
             control_frequency: 10.0
         </rosparam>
   </node>
-  <node pkg="rosserial_python" type="serial_node.py" name="arduino" args="$(arg port)"/>
-  <!--<include file="$(find minesweeper_control)/launch/control.launch">
+  <include file="$(find minesweeper_control)/launch/control.launch">
     <arg name="offset" value="$(arg offset)"/>
-  </include>-->
-  <!--<include file="$(find minesweeper_control)/launch/teleop.launch">
+  </include>
+  <include file="$(find minesweeper_control)/launch/teleop.launch">
     <arg name="port" value="$(arg port)"/>
-  </include>-->
+  </include>
 </launch>
