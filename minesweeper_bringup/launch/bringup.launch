@@ -1,0 +1,7 @@
+<launch>
+  <arg name="port" default="/dev/ttyACM0"/>
+    <machine name="slave" address="192.168.100.4" env-loader="/opt/ros/kinetic/env.sh"/>
+    <include machine="slave" file="$(find minesweeper_base)/launch/base.launch">
+        <arg name="port" value="$(arg port)"/>
+    </include>
+</launch>
