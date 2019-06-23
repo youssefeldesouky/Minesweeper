@@ -20,12 +20,12 @@
           <inertial>
             <!--<origin xyz="0.17982 0.32146 0.02496" rpy="0 0 0"/>-->
             <mass value="3.1041" />
-            <inertia ixx="9.0731E-05" ixy="4.2946E-13" ixz="-6.6251E-14" iyy="2.038E-07" iyz="1.3211E-06" izz="9.0527E-05"/>
+            <inertia  ixx="0.02467" ixy="0" ixz="0" iyy="0.04411" iyz="0" izz="0.02467" />
           </inertial>
       </link>
       <gazebo reference="${prefix}_wheel_link">
-  			<mu1 value="400.0"/>
-  			<mu2 value="100.0"/>
+  			<mu1 value="1.0"/>
+  			<mu2 value="1.0"/>
   			<kp value="10000000.0" />
   			<kd value="1.0" />
   			<fdir1 value="1 0 0"/>
