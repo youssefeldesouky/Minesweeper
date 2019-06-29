@@ -22,6 +22,7 @@ class Controller(object):
         self._l22 = 0.0
         self._profile_2_linear_axis = 0.0
         self._linear_speed_limit = rospy.get_param("teleop/linear_speed_limit", 1.50)
+        self._bluetooth_enabled = rospy.get_param("bluetooth_xbox", False)
         self._linear_speed_step = rospy.get_param("teleop/linear_speed_step", 0.10)
         self._angular_speed_limit = rospy.get_param("teleop/angular_speed_limit", 1.00)
         self._angular_speed_step = rospy.get_param("teleop/angular_speed_step", 0.05)

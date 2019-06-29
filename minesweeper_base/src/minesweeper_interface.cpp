@@ -11,7 +11,7 @@
     typedef boost::chrono::steady_clock time_source;
     double joints_positions_[4];  //stores readings from arduino joints callback functions
     ros::Publisher left_cmd, right_cmd;
-    std_msgs::Float32 left, right;
+    std_msgs::Int16 left, right;
     double test_l, test_r;
     void jointPositionsCB(const std_msgs::Float32MultiArray &joint_pos) {
         for(int i = 0; i < 4; i++){
@@ -87,11 +87,11 @@
     void MinesweeperHardware::write(ros::NodeHandle& nh) {
         double left_cmd_vel = radsToRPM(joints_[0].cmd);
         double right_cmd_vel = radsToRPM(joints_[1].cmd);
-        left_cmd = nh.advertise<std_msgs::Float32>("left_cmd", 1000);
-        right_cmd = nh.advertise<std_msgs::Float32>("right_cmd", 1000);
+        left_cmd = nh.advertise<std_msgs::Int16>("left_cmd", 1000);
+        right_cmd = nh.advertise<std_msgs::Int16>("right_cmd", 1000);
         //code that publishes the cmd velocity
-        left.data = joints_[0].cmd;
-        right.data = joints_[1].cmd;
+        left.data = (int16_t)left_cmd_vel;
+        right.data = (int16_t)right_cmd_vel;
         //*l = left.data;
         //*r = right.data;
         //left.data = test_l;
