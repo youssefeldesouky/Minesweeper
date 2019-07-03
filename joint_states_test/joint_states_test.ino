@@ -19,17 +19,17 @@ void signCB(const std_msgs::Int8MultiArray &data){
   r_sign = data.data[1];
 }
 
-void leftCmdCB(const std_msgs::Float32 &data){
+void leftCmdCB(const std_msgs::Int16 &data){
   left_cmd = (int16_t)data.data;
 }
 
-void rightCmdCB(const std_msgs::Float32 &data){
+void rightCmdCB(const std_msgs::Int16 &data){
   right_cmd = (int16_t)data.data;
 }
 
 ros::Subscriber<std_msgs::Int8MultiArray> sign_sub("sign", &signCB);
-ros::Subscriber<std_msgs::Float32> left_cmd_sub("left_cmd", &leftCmdCB);
-ros::Subscriber<std_msgs::Float32> right_cmd_sub("left_cmd", &rightCmdCB);
+ros::Subscriber<std_msgs::Int16> left_cmd_sub("left_cmd", &leftCmdCB);
+ros::Subscriber<std_msgs::Int16> right_cmd_sub("left_cmd", &rightCmdCB);
 std_msgs::Float32MultiArray joint_states;
 ros::Publisher js_pub("joint_positions", &joint_states);
 
@@ -47,6 +47,11 @@ void setup() {
 }
 
 void loop() {
+  /*
+  
+    insert mapping functionality here.
+
+  */
   l_pos = ((double)l_ticks/maxTicks) * 2 * PI;
   r_pos = ((double)r_ticks/maxTicks) * 2 * PI;
   float positions[4] = {l_pos, r_pos, l_pos, r_pos};
