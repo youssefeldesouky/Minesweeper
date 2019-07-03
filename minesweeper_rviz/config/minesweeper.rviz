@@ -78,6 +78,15 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        coil_center_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        coil_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         front_left_wheel_link:
           Alpha: 1
           Show Axes: false
@@ -117,6 +126,10 @@ Visualization Manager:
           Value: true
         base_link:
           Value: true
+        coil_center_link:
+          Value: true
+        coil_link:
+          Value: true
         front_left_wheel_link:
           Value: true
         front_right_wheel_link:
@@ -139,6 +152,9 @@ Visualization Manager:
           base_link:
             base_footprint:
               {}
+            coil_link:
+              coil_center_link:
+                {}
             front_left_wheel_link:
               {}
             front_right_wheel_link:
@@ -228,6 +244,14 @@ Visualization Manager:
       Topic: /diff_drive/odom
       Unreliable: false
       Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: visualization_marker
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -256,7 +280,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 7.219857692718506
+      Distance: 9.05659008026123
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1

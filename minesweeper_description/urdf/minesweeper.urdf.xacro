@@ -56,8 +56,8 @@
     <joint name="coil" type="fixed">
         <parent link="base_link"/>
         <child link="coil_link"/>
-        <origin xyz="0.355 0.0 0.022"/>
-    </joint>
+        <origin xyz="0.355 0.0 0.04"/>
+    </joint>pose
     <gazebo reference="coil_link">
       <visual name="base_link_visual">
           <material>
@@ -66,6 +66,13 @@
           </material>
       </visual>
     </gazebo>
+    <link name="coil_center_link">
+    </link>
+    <joint name="coil_center" type="fixed">
+        <parent link="coil_link"/>
+        <child link="coil_center_link"/>
+        <origin xyz="0.190 0.0 -0.1"/>
+    </joint>
     <xacro:wheel prefix="front_left" angle="0.0">
       <origin xyz="0.16807 0.161 0.05268"/>
     </xacro:wheel>

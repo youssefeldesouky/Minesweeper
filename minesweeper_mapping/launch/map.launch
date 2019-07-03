@@ -1,0 +1,4 @@
+<launch>
+    <node name="coil" pkg="minesweeper_mapping" type="coil_pose.py"/>
+    <node name="marker" pkg="minesweeper_mapping" type="marker.py"/>
+</launch>

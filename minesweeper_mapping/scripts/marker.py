@@ -3,7 +3,7 @@ import rospy
 from nav_msgs.msg import Odometry
 from visualization_msgs.msg import Marker
 from sensor_msgs.msg import Joy
-from geometry_msgs.msg import PoseWithCovariance
+from geometry_msgs.msg import PoseWithCovariance, Pose
 from geometry_msgs.msg import Quaternion
 
 
@@ -13,13 +13,13 @@ class Mine(object):
         self._a = 0
         self._b = 0
         self._joy_sub = rospy.Subscriber("/joy", Joy, self.joy_callback)
-        self._odom_sub = rospy.Subscriber("/odometry/filtered", Odometry, self.odom_callback)
+        self._odom_sub = rospy.Subscriber("/coil_tf", Pose, self.odom_callback)
         self._pub = rospy.Publisher("visualization_marker", Marker, queue_size=100)
         self._rate = rospy.Rate(10)
         self._marker_a = Marker()
         self._marker_b = Marker()
-        self._marker_location_a = PoseWithCovariance()
-        self._marker_location_b = PoseWithCovariance()
+        self._marker_location_a = Pose()
+        self._marker_location_b = Pose()
         self._detection_lock_a = False
         self._detection_lock_b = False
         self._id_counter_a = 0
@@ -36,11 +36,11 @@ class Mine(object):
     def odom_callback(self, data):
         if self._a == 1 and not self._detection_lock_a:
             self._id_counter_a += 1
-            self._marker_location_a = data.pose
+            self._marker_location_a = data
             self._detection_lock_a = True
         elif self._b and not self._detection_lock_b:
             self._id_counter_b += 1
-            self._marker_location_b = data.pose
+            self._marker_location_b = data
             self._detection_lock_b = True
 
     def marker(self):
@@ -51,11 +51,11 @@ class Mine(object):
             self._marker_a.id = self._id_counter_a
             self._marker_a.type = self._marker_a.CUBE
             self._marker_a.action = self._marker_a.ADD
-            self._marker_a.pose = self._marker_location_a.pose
+            self._marker_a.pose = self._marker_location_a
             self._marker_a.pose.orientation = Quaternion()
             self._marker_a.pose.orientation.w = 1.0
-            self._marker_a.scale.x = 0.50
-            self._marker_a.scale.y = 0.50
+            self._marker_a.scale.x = 0.25
+            self._marker_a.scale.y = 0.25
             self._marker_a.scale.z = 0.10
             self._marker_a.color.r = 1.0
             self._marker_a.color.g = 0.0
@@ -69,11 +69,12 @@ class Mine(object):
             self._marker_b.id = self._id_counter_b
             self._marker_b.type = self._marker_b.CYLINDER
             self._marker_b.action = self._marker_b.ADD
-            self._marker_b.pose = self._marker_location_b.pose
+            self._marker_b.pose = self._marker_location_b
+            self._marker_b.pose.position.z = -0.15
             self._marker_b.pose.orientation = Quaternion()
             self._marker_b.pose.orientation.w = 1.0
-            self._marker_b.scale.x = 0.50
-            self._marker_b.scale.y = 0.50
+            self._marker_b.scale.x = 0.25
+            self._marker_b.scale.y = 0.25
             self._marker_b.scale.z = 0.10
             self._marker_b.color.r = 0.0
             self._marker_b.color.g = 1.0
