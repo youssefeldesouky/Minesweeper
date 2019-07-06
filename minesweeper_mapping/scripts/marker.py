@@ -5,14 +5,15 @@ from visualization_msgs.msg import Marker
 from sensor_msgs.msg import Joy
 from geometry_msgs.msg import PoseWithCovariance, Pose
 from geometry_msgs.msg import Quaternion
-
+from std_msgs.msg import Int8
 
 class Mine(object):
     def __init__(self):
         rospy.init_node("marker", anonymous=False)
         self._a = 0
         self._b = 0
-        self._joy_sub = rospy.Subscriber("/joy", Joy, self.joy_callback)
+        #self._joy_sub = rospy.Subscriber("/joy", Joy, self.joy_callback)
+        self._coil_sub = rospy.Subscriber("/coil_state", Int8, self.coil_callback)
         self._odom_sub = rospy.Subscriber("/coil_tf", Pose, self.odom_callback)
         self._pub = rospy.Publisher("visualization_marker", Marker, queue_size=100)
         self._rate = rospy.Rate(10)
@@ -25,9 +26,24 @@ class Mine(object):
         self._id_counter_a = 0
         self._id_counter_b = 0
 
+    """
     def joy_callback(self, data):
         self._a = data.buttons[0]
         self._b = data.buttons[1]
+        if self._a == 0:
+            self._detection_lock_a = False
+        if self._b == 0:
+            self._detection_lock_b = False
+    """
+    def coil_callback(self, data):
+        if data.data == 1:
+            self._a = 1
+            self._b = 0
+        elif data.data == 2:
+            self._b = 1
+            self._a = 0
+        else:
+            self._a = self._b = 0
         if self._a == 0:
             self._detection_lock_a = False
         if self._b == 0:
