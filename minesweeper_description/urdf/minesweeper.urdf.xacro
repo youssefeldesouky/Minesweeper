@@ -34,7 +34,7 @@
     </gazebo>
     <link name="imu_link"/>
     <joint name="imu_joint" type="fixed">
-      <origin xyz="0.375 0.0 0.075" rpy="0.0 0.0 0.0"/>
+      <origin xyz="0.0 0.0 0.075" rpy="0.0 0.0 0.0"/>
       <parent link="base_link"/>
       <child link="imu_link"/>
     </joint>
@@ -90,7 +90,7 @@
         <robotNamespace>$(arg robot_namespace)</robotNamespace>
       </plugin>
     </gazebo>
-    <gazebo>
+    <!--<gazebo>
       <plugin name="imu_controller" filename="libhector_gazebo_ros_imu.so">
         <robotNamespace>$(arg robot_namespace)</robotNamespace>
         <updateRate>50.0</updateRate>
@@ -103,5 +103,5 @@
         <headingDrift>0.005</headingDrift>
         <headingGaussianNoise>0.005</headingGaussianNoise>
       </plugin>
-    </gazebo>
+    </gazebo>-->
 </robot>

@@ -5,10 +5,9 @@ from std_msgs.msg import Int8MultiArray
 import rospy
 import math
 
-
 class Controller(object):
     def __init__(self):
-        rospy.init_node("controller", anonymous=False)
+        rospy.init_node("controller_ps4", anonymous=False)
         self._sub = rospy.Subscriber("joy", Joy, self.callback)
         self._rate = rospy.Rate(50)
         self._pub = rospy.Publisher("cmd_vel", Twist, queue_size=10)
@@ -21,6 +20,9 @@ class Controller(object):
         self._l2 = 0.0
         self._r22 = 0.0
         self._l22 = 0.0
+        self._opt_button = 0
+        self._l1 = 0
+        self._r1 = 0
         self._profile_2_linear_axis = 0.0
         self._linear_speed_limit = rospy.get_param("teleop/linear_speed_limit", 1.50)
         self._bluetooth_enabled = rospy.get_param("bluetooth_xbox", False)
@@ -31,24 +33,38 @@ class Controller(object):
         self._max_angular_speed = 1.0
         self._dpad_y = 0.0
         self._dpad_x = 0.0
-        self._inverted_right_stick_x = -1  # for profile 1
+        self._inverted_right_stick_x = 1  # for profile 1
         self._inverted_left_stick_x = -1  # for profile 2
         self._r3 = 1
         self._l3 = 1
         self._share_button = 0
-        self._cross = 0
+        self._square = 0
+        self._circle = 0
+        self._magnet_state = 0
+        self._servo_state = 0
+        self._servo_states = (-1, 0, 1)
+        self._dc_state = 0
         self._profile = 1
         self._linear_lock = False
         self._inverted_angular_lock = False
         self._angular_lock = False
         self._share_lock = False
         self._profile_2_linear_lock = True
+        self._servo_angle_lock = False
+        self._magnet_lock = False
+        self._dc_motor_lock = False
+        self._opt_button_lock = False
+
 
         # Remove in case of Quadrature encoder
         self._sign_pub = rospy.Publisher("sign", Int8MultiArray, queue_size=1)
         self._l_sign = 1
         self._r_sign = 1
         self._signs = Int8MultiArray()
+
+        self._crane_states = Int8MultiArray()
+        self._crane_states.data = (-1, 0, 0)
+        self._pub_crane = rospy.Publisher("crane", Int8MultiArray, queue_size = 10)
 
     def callback(self, data):
         self._left_stick_y = data.axes[1]
@@ -59,26 +75,30 @@ class Controller(object):
         self._l2 = data.axes[2]
         self._dpad_y = data.axes[7]
         self._dpad_x = data.axes[6] * -1
-        self._r3 = data.buttons[10]
-        self._l3 = data.buttons[9]
-        self._share_button = data.buttons[6]
-        self._cross = data.buttons[2]
+        self._r3 = data.buttons[12]
+        self._l3 = data.buttons[11]
+        self._share_button = data.buttons[8]
+        self._opt_button = data.buttons[9]
+        self._l1 = data.buttons[4]
+        self._r1 = data.buttons[5]
+        self._circle = data.buttons[1]
+        self._square = data.buttons[3]
 
     def profile_1(self):
         self.speed_limits()
-        if -0.09 <= self._right_stick_y <= 0.09:
-            self._right_stick_y = 0.0
-        if -0.05 <= self._left_stick_x <= 0.05:
-            self._left_stick_x = 0.0
+        if -0.04 <= self._left_stick_y <= 0.04:
+            self._left_stick_y = 0.0
+        if -0.05 <= self._right_stick_x <= 0.05:
+            self._right_stick_x = 0.0
         if self._r3 != 0:
             if not self._inverted_angular_lock:
-                self._inverted_left_stick_x = self._inverted_left_stick_x * -1
+                self._inverted_right_stick_x = self._inverted_right_stick_x * -1
                 self._inverted_angular_lock = True
         else:
             self._inverted_angular_lock = False
 
-        self._velocity.linear.x = self._right_stick_y * self._max_linear_speed
-        self._velocity.angular.z = self._left_stick_x * self._max_angular_speed
+        self._velocity.linear.x = self._left_stick_y * self._max_linear_speed
+        self._velocity.angular.z = self._right_stick_x * self._max_angular_speed
 
     def profile_2(self):
         self.speed_limits()
@@ -104,6 +124,39 @@ class Controller(object):
 
         self._velocity.linear.x = self._profile_2_linear_axis * self._max_linear_speed
         self._velocity.angular.z = self._left_stick_x * self._max_angular_speed
+
+    def profile_crane(self):
+        if self._l1 != 0 or self._r1 != 0:
+            if not self._servo_angle_lock:
+                if self._l1 == 1:
+                    self._servo_state -= 1
+                if self._r1 == 1:
+                    self._servo_state += 1
+                if self._servo_state <= 0:
+                    self._servo_state = 0
+                elif self._servo_state >= 2:
+                    self._servo_state = 2
+                self._servo_angle_lock = True
+        else:
+            self._servo_angle_lock = False
+
+        self._dc_state = self._dpad_y
+
+        if self._circle != 0:
+            if not self._magnet_lock:
+                if self._magnet_state == 0:
+                    self._magnet_state = 1
+                elif self._magnet_state == 1:
+                    self._magnet_state = 0
+                self._magnet_lock = True
+
+
+        else:
+            self._magnet_lock = False
+        self._crane_states.data = (self._servo_states[self._servo_state], self._magnet_state, self._dc_state)
+        rospy.loginfo(self._servo_states[self._servo_state])
+
+
 
     def speed_limits(self):
         if self._dpad_y != 0.0:
@@ -132,7 +185,7 @@ class Controller(object):
             self._angular_lock = False
 
     def stop(self):
-        if self._cross == 1:
+        if self._square == 1:
             self._velocity.linear.x = 0.0
             self._velocity.angular.z = 0.0
 
@@ -144,19 +197,31 @@ class Controller(object):
                         self._profile = 2
                     elif self._profile == 2:
                         self._profile = 1
+                    elif self._profile == 3:
+                        self._profile = 1
                     self._velocity.linear.x = 0.0
                     self._velocity.angular.z = 0.0
                     self._share_lock = True
             else:
                 self._share_lock = False
 
+            if self._opt_button == 1:
+                if not self._opt_button_lock:
+                    self._profile = 3
+                    self._opt_button_lock = True
+            else:
+                self._opt_button_lock = False
+
             if self._profile == 1:
                 self.profile_1()
             elif self._profile == 2:
                 self.profile_2()
+            elif self._profile == 3:
+                self.profile_crane()
             self.stop()
             self._pub.publish(self._velocity)
             self.sign_publisher()
+            self._pub_crane.publish(self._crane_states)
             self._rate.sleep()
 
     # Remove in case of Quadrature encoder

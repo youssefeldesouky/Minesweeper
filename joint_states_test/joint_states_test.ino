@@ -8,10 +8,10 @@
 ros::NodeHandle nh;
 
 const uint8_t L = 2, R = 3;
-uint32_t l_ticks, r_ticks;
-const uint8_t maxTicks = 60;  //PPR
+int32_t l_ticks, r_ticks;
+const uint16_t maxTicks = 970;  //PPR
 double l_pos, r_pos;
-uint8_t l_sign = 1, r_sign = 1;
+int8_t l_sign = 1, r_sign = 1;
 int16_t left_cmd, right_cmd;
 
 void signCB(const std_msgs::Int8MultiArray &data){
@@ -36,8 +36,8 @@ ros::Publisher js_pub("joint_positions", &joint_states);
 void setup() {
   pinMode(L, INPUT_PULLUP);
   pinMode(R, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(L), leftENC, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(R), rightENC, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(L), leftENC, RISING);
+  attachInterrupt(digitalPinToInterrupt(R), rightENC, RISING);
   nh.initNode();
   nh.subscribe(sign_sub);
   nh.subscribe(left_cmd_sub);
