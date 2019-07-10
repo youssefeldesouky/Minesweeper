@@ -35,6 +35,7 @@ class Controller(object):
         self._dpad_x = 0.0
         self._inverted_right_stick_x = 1  # for profile 1
         self._inverted_left_stick_x = -1  # for profile 2
+        self._inverted_left_stick_crane = 1 # for crane profile
         self._r3 = 1
         self._l3 = 1
         self._share_button = 0
@@ -50,6 +51,7 @@ class Controller(object):
         self._angular_lock = False
         self._share_lock = False
         self._profile_2_linear_lock = True
+        self._crane_inverted_lock = False
         self._servo_angle_lock = False
         self._magnet_lock = False
         self._dc_motor_lock = False
@@ -126,6 +128,13 @@ class Controller(object):
         self._velocity.angular.z = self._left_stick_x * self._max_angular_speed
 
     def profile_crane(self):
+        if self._l3 != 0:
+            if not self._crane_inverted_lock:
+                self._inverted_left_stick_crane *= -1
+                self._crane_inverted_lock = True
+        else:
+            self._crane_inverted_lock = False
+
         if self._l1 != 0 or self._r1 != 0:
             if not self._servo_angle_lock:
                 if self._l1 == 1:
@@ -140,7 +149,7 @@ class Controller(object):
         else:
             self._servo_angle_lock = False
 
-        self._dc_state = self._dpad_y
+        self._dc_state = self._dpad_y * self._inverted_left_stick_crane
 
         if self._circle != 0:
             if not self._magnet_lock:
@@ -154,8 +163,6 @@ class Controller(object):
         else:
             self._magnet_lock = False
         self._crane_states.data = (self._servo_states[self._servo_state], self._magnet_state, self._dc_state)
-        rospy.loginfo(self._servo_states[self._servo_state])
-
 
 
     def speed_limits(self):
@@ -207,7 +214,10 @@ class Controller(object):
 
             if self._opt_button == 1:
                 if not self._opt_button_lock:
-                    self._profile = 3
+                    if self._profile != 3:
+                        self._profile = 3
+                    else:
+                        self._profile = 1
                     self._opt_button_lock = True
             else:
                 self._opt_button_lock = False
