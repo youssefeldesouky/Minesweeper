@@ -56,7 +56,7 @@ class Controller(object):
         self._magnet_lock = False
         self._dc_motor_lock = False
         self._opt_button_lock = False
-
+        self._sign_lock = False
 
         # Remove in case of Quadrature encoder
         self._sign_pub = rospy.Publisher("sign", Int8MultiArray, queue_size=1)
@@ -236,15 +236,21 @@ class Controller(object):
 
     # Remove in case of Quadrature encoder
     def sign_publisher(self):
-        if not self._velocity.angular.z:
-            self._l_sign = math.copysign(1, self._velocity.linear.x)
-            self._r_sign = math.copysign(1, self._velocity.linear.x)
-        elif self._velocity.angular.z > 0.0:
-            self._l_sign = math.copysign(1, self._velocity.linear.x)
-            self._r_sign = math.copysign(1, self._velocity.linear.x) * -1.0
-        elif self._velocity.angular.z < 0.0:
-            self._l_sign = math.copysign(1, self._velocity.linear.x) * -1.0
-            self._r_sign = math.copysign(1, self._velocity.linear.x)
+        if self._velocity.linear.x == 0.0 and self._velocity.angular.z == 0.0:
+            self._sign_lock = True
+        else:
+            self._sign_lock = False
+
+        if not self._sign_lock:
+            if not self._velocity.angular.z:
+                self._l_sign = math.copysign(1, self._velocity.linear.x)
+                self._r_sign = math.copysign(1, self._velocity.linear.x)
+            elif self._velocity.angular.z > 0.0:
+                self._l_sign = math.copysign(1, self._velocity.linear.x)
+                self._r_sign = math.copysign(1, self._velocity.linear.x) * -1.0
+            elif self._velocity.angular.z < 0.0:
+                self._l_sign = math.copysign(1, self._velocity.linear.x) * -1.0
+                self._r_sign = math.copysign(1, self._velocity.linear.x)
         self._signs.data = (self._l_sign, self._r_sign)
         self._sign_pub.publish(self._signs)
 
