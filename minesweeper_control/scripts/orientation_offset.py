@@ -15,7 +15,7 @@ class Converter(object):
         self._offset_q = self.calculate_offset(self._offset_str)
         self._sub = rospy.Subscriber("/android/imu", Imu, self.e2q_cb)
         self._pub = rospy.Publisher("imu/data", Imu, queue_size=10)
-        self._rate = rospy.Rate(50)
+        self._rate = rospy.Rate(100) # it was 50Hz
         self._r_orientation = Quaternion()
         self._p_orientation = Quaternion()
         self._imu_data = Imu()
