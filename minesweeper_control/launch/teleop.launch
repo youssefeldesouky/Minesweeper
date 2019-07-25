@@ -1,10 +1,10 @@
 <launch>
   <arg name="port" default="/dev/input/js2"/>
   <rosparam command ="load" file="$(find minesweeper_control)/config/teleop.yaml" />
-  <node name="xbox" pkg="minesweeper_control" type="joy_teleop.py"/>
+  <node name="xbox" pkg="minesweeper_control" type="joy_teleop.py" output="screen"/>
   <node name="joy_node" pkg="joy" type="joy_node">
     <param name="dev" type="string" value="$(arg port)"/>
-    <param name="autorepeat_rate" type="double" value="1"/>
+    <param name="autorepeat_rate" type="double" value="50"/>
   </node>
   <remap from="cmd_vel" to="diff_drive/cmd_vel"/>
 </launch>

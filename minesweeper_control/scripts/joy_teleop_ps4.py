@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from sensor_msgs.msg import Joy
 from geometry_msgs.msg import Twist
-from std_msgs.msg import Int8MultiArray
+from std_msgs.msg import Int8MultiArray, Bool
 import rospy
 import math
 
@@ -9,6 +9,7 @@ class Controller(object):
     def __init__(self):
         rospy.init_node("controller_ps4", anonymous=False)
         self._sub = rospy.Subscriber("joy", Joy, self.callback)
+        self._timeout_sub = rospy.Subscriber("joy_timeout", Bool, self.timeout_cb)
         self._rate = rospy.Rate(50)
         self._pub = rospy.Publisher("cmd_vel", Twist, queue_size=10)
         self._velocity = Twist()
@@ -58,6 +59,8 @@ class Controller(object):
         self._opt_button_lock = False
         self._sign_lock = False
 
+        self._timeout_state = True
+
         # Remove in case of Quadrature encoder
         self._sign_pub = rospy.Publisher("sign", Int8MultiArray, queue_size=1)
         self._l_sign = 1
@@ -85,6 +88,9 @@ class Controller(object):
         self._r1 = data.buttons[5]
         self._circle = data.buttons[1]
         self._square = data.buttons[3]
+
+    def timeout_cb(self, data):
+        self._timeout_state = data.data
 
     def profile_1(self):
         self.speed_limits()
@@ -192,7 +198,7 @@ class Controller(object):
             self._angular_lock = False
 
     def stop(self):
-        if self._square == 1:
+        if self._square == 1 or not self._timeout_state:
             self._velocity.linear.x = 0.0
             self._velocity.angular.z = 0.0
 
