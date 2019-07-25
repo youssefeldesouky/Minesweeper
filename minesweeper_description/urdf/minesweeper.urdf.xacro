@@ -71,7 +71,7 @@
     <joint name="coil_center" type="fixed">
         <parent link="coil_link"/>
         <child link="coil_center_link"/>
-        <origin xyz="0.190 0.0 -0.1"/>
+        <origin xyz="0.290 0.0 -0.1"/> <!--it was 0.190 in the x-->
     </joint>
     <xacro:wheel prefix="front_left" angle="0.0">
       <origin xyz="0.16807 0.161 0.05268"/>

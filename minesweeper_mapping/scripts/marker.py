@@ -115,7 +115,7 @@ class Mine(object):
                 pass
             if self._id_counter_a > 0:
                 self._pub.publish(self._marker_a)
-                self._rqt_mine_pub.publish(self._rqt_mine_location)
+
             if self._id_counter_b > 0:
                 self._pub.publish(self._marker_b)
             self._rate.sleep()
