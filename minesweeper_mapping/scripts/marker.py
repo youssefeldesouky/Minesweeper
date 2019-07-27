@@ -32,7 +32,7 @@ class Mine(object):
         self._rqt_mine_y = 0.0
         self._rqt_mine_type = 0
 
-
+    # comment out when testing with a real robot
     def joy_callback(self, data):
         self._a = data.buttons[0]
         self._b = data.buttons[1]

@@ -2,9 +2,9 @@
 from sensor_msgs.msg import Joy
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Int8MultiArray, Bool
+from minesweeper_msgs.msg import ControllerStats
 import rospy
 import math
-
 
 class Controller(object):
     def __init__(self):
@@ -13,6 +13,8 @@ class Controller(object):
         self._timeout_sub = rospy.Subscriber("joy_timeout", Bool, self.timeout_cb)
         self._rate = rospy.Rate(50)
         self._pub = rospy.Publisher("cmd_vel", Twist, queue_size=10)
+        self._stats_pub = rospy.Publisher("controller_stats", ControllerStats, queue_size=10)
+        self._stats = ControllerStats()
         self._velocity = Twist()
         self._left_stick_y = 0.0
         self._left_stick_x = 0.0
@@ -24,7 +26,7 @@ class Controller(object):
         self._l22 = 0.0
         self._profile_2_linear_axis = 0.0
         self._linear_speed_limit = rospy.get_param("teleop/linear_speed_limit", 1.50)
-        self._bluetooth_enabled = rospy.get_param("bluetooth_xbox", False)
+        self._bluetooth_enabled = rospy.get_param("bluetooth", False)
         self._linear_speed_step = rospy.get_param("teleop/linear_speed_step", 0.10)
         self._angular_speed_limit = rospy.get_param("teleop/angular_speed_limit", 1.00)
         self._angular_speed_step = rospy.get_param("teleop/angular_speed_step", 0.05)
@@ -143,6 +145,14 @@ class Controller(object):
             self._velocity.linear.x = 0.0
             self._velocity.angular.z = 0.0
 
+    def stats(self):
+        self._stats.profile = self._profile
+        self._stats.max_lin = "{:.1f}".format(self._max_linear_speed + 0.01)
+        self._stats.max_ang = "{:.1f}".format(self._max_angular_speed + 0.01)
+        self._stats.cur_lin = str(self._velocity.linear.x)
+        self._stats.cur_ang = str(self._velocity.angular.z)
+        self._stats_pub.publish(self._stats)
+
     def publisher(self):
         while not rospy.is_shutdown():
             if self._share_button == 1:
@@ -164,6 +174,7 @@ class Controller(object):
             self.stop()
             self._pub.publish(self._velocity)
             self.sign_publisher()
+            self.stats()
             self._rate.sleep()
 
     # Remove in case of Quadrature encoder

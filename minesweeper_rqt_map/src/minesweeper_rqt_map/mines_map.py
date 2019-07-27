@@ -37,7 +37,7 @@ class MapPlugin(Plugin):
         # Create QWidget
         self._widget = QWidget()
         # Get path to UI file which should be in the "resource" folder of this package
-        ui_file = os.path.join(rospkg.RosPack().get_path('minesweeper_rqt'), 'resource', 'mines_map.ui')
+        ui_file = os.path.join(rospkg.RosPack().get_path('minesweeper_rqt_map'), 'resource', 'mines_map.ui')
         # Extend the widget with all attributes and children from UI file
         loadUi(ui_file, self._widget)
         # Give QObjects reasonable names
@@ -75,6 +75,7 @@ class MapPlugin(Plugin):
     def mine_callback(self, data):
         self._mine_location = data
         self.listen()
+        self._widget.map.viewport().update()
 
     def listen(self):
         if self._mine_location.data[2] != 0:
@@ -83,19 +84,19 @@ class MapPlugin(Plugin):
                 x.setBackground(self._gray_color)
                 b = "{0}{1}".format(self._alphabet[self._mine_location.data[1]], self._mine_location.data[0] + 1)
                 for i in range(0, self._widget.surface_list.count()):
-                    if b == self._widget.surface_list.item(i).text():
+                    if b == self._widget.surface_list.item(i).text().lower():
                         break
                 else:
-                    self._widget.surface_list.addItem(b)
+                    self._widget.surface_list.addItem(str(b).upper())
             elif self._mine_location.data[2] == -1:
                 x = QTableWidgetItem()
                 x.setBackground(self._black_color)
                 b = "{0}{1}".format(self._alphabet[self._mine_location.data[1]], self._mine_location.data[0] + 1)
                 for i in range(0, self._widget.buried_list.count()):
-                    if b == self._widget.buried_list.item(i).text():
+                    if b == self._widget.buried_list.item(i).text().lower():
                         break
                 else:
-                    self._widget.buried_list.addItem(b)
+                    self._widget.buried_list.addItem(str(b).upper())
             self._widget.map.setItem(19 - self._mine_location.data[0] - 1, self._mine_location.data[1] + 1, x)
             self._widget.total_sum.display(self._widget.buried_list.count() + self._widget.surface_list.count())
             self._widget.total_sum.setFrameStyle(2)

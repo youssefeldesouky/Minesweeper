@@ -22,4 +22,5 @@
     <remap from="cmd_vel_out" to="diff_drive/cmd_vel"/>
   </node>
   <node pkg="minesweeper_control" type="joy_timeout.py" name="joy_timeout"/>
+  <include file="$(find minesweeper_mapping)/launch/map.launch"/>
 </launch>

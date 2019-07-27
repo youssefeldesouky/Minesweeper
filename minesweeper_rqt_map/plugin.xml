@@ -1,16 +1,16 @@
 <library path="src">
-  <class name="Mines Map" type="minesweeper_rqt.mines_map.MapPlugin" base_class_type="rqt_gui_py::Plugin">
+  <class name="Mines Map" type="minesweeper_rqt_map.mines_map.MapPlugin" base_class_type="rqt_gui_py::Plugin">
     <description>
       A 2D mines map with numerical stats of the mines detected.
     </description>
     <qtgui>
       <group>
-        <label>Minesweeper_tools</label>
+        <label>Minesweeper Tools</label>
         <icon type="theme">folder</icon>
       </group>
       <label>Mines Map</label>
       <icon type="theme">applications-internet</icon>
-      <statustip>A 2D map that provides the locations and types of the detected mines</statustip>
+      <statustip>A 2D map that provides the locations and types of the detected mines.</statustip>
     </qtgui>
   </class>
 </library>

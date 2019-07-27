@@ -73,8 +73,8 @@ digitalWrite(L_EN_B,LOW);
 
 void loop() {
   Motor_Drive();
-  l_pos = ((double)l_ticks/980) * 2 * PI;
-  r_pos = ((double)r_ticks/980) * 2 * PI;
+  l_pos = ((double)l_ticks/maxTicks) * 2 * PI;
+  r_pos = ((double)r_ticks/maxTicks) * 2 * PI;
   float positions[4] = {l_pos, r_pos, l_pos, r_pos};
   joint_states.data = positions;
   js_pub.publish(&joint_states);

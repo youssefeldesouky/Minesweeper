@@ -2,9 +2,9 @@
 
 import sys
 
-from minesweeper_rqt.mines_map import MapPlugin
+from minesweeper_rqt_stats.controller_stats import StatsPlugin
 from rqt_gui.main import Main
 
-plugin = 'mines_map'
+plugin = 'controller_stats'
 main = Main(filename=plugin)
 sys.exit(main.main(standalone=plugin))

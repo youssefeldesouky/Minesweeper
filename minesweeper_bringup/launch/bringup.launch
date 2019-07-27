@@ -1,5 +1,8 @@
 <launch>
-  <arg name="port" default="/dev/ttyACM0"/>
-  <machine name="slave" address="192.168.100.4" env-loader="/opt/ros/kinetic/env.sh"/>
-  <node machine="slave" name="arduino" pkg="rosserial_python" type="serial_node.py" args="$(arg port)"/>
+  <include file="$(find minesweeper_gazebo)/launch/empty.launch">
+    <arg name="gui" value="false"/>
+  </include>
+  <include file="$(find minesweeper_control)/launch/teleop.launch"/>
+  <include file="$(find minesweeper_rviz)/launch/viz.launch"/>
+  <node pkg="rqt_gui" type="rqt_gui" name="rqt"/>
 </launch>

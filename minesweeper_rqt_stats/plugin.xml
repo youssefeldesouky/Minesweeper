@@ -1,0 +1,16 @@
+<library path="src">
+  <class name="Controller Stats" type="minesweeper_rqt_stats.controller_stats.StatsPlugin" base_class_type="rqt_gui_py::Plugin">
+    <description>
+      A visualization for the current controller values.
+    </description>
+    <qtgui>
+      <group>
+        <label>Minesweeper Tools</label>
+        <icon type="theme">folder</icon>
+      </group>
+      <label>Controller Stats</label>
+      <icon type="theme">utilities-system-monitor</icon>
+      <statustip>A visualization for the current controller values.</statustip>
+    </qtgui>
+  </class>
+</library>
