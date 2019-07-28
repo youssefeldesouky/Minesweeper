@@ -2,7 +2,10 @@
   <include file="$(find minesweeper_gazebo)/launch/empty.launch">
     <arg name="gui" value="false"/>
   </include>
-  <include file="$(find minesweeper_control)/launch/teleop.launch"/>
-  <include file="$(find minesweeper_rviz)/launch/viz.launch"/>
-  <node pkg="rqt_gui" type="rqt_gui" name="rqt"/>
+  <node pkg="timed_roslaunch" type="timed_roslaunch.sh"
+    args="4 minesweeper_rviz viz.launch"
+    name="timed_rviz" output="screen" />
+  <node pkg="timed_roslaunch" type="timed_roslaunch.sh"
+    args="3 minesweeper_control teleop.launch"
+    name="timed_teleop" output="screen" />
 </launch>
