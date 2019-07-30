@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
 from nav_msgs.msg import Odometry
-from std_msgs.msg import Int8MultiArray
+from std_msgs.msg import Int16MultiArray
 from visualization_msgs.msg import Marker
 from sensor_msgs.msg import Joy
 from geometry_msgs.msg import PoseWithCovariance, Pose
@@ -13,10 +13,10 @@ class Mine(object):
         rospy.init_node("marker", anonymous=False)
         self._a = 0
         self._b = 0
-        self._joy_sub = rospy.Subscriber("/joy", Joy, self.joy_callback)
+        #self._joy_sub = rospy.Subscriber("/joy", Joy, self.joy_callback)
         self._coil_sub = rospy.Subscriber("/coil_state", Int8, self.coil_callback)
         self._odom_sub = rospy.Subscriber("/coil_tf", Pose, self.odom_callback)
-        self._rqt_mine_pub = rospy.Publisher("/rqt_mine_location", Int8MultiArray, queue_size=10)
+        self._rqt_mine_pub = rospy.Publisher("/rqt_mine_location", Int16MultiArray, queue_size=10)
         self._pub = rospy.Publisher("visualization_marker", Marker, queue_size=100)
         self._rate = rospy.Rate(10)
         self._marker_a = Marker()
@@ -27,25 +27,28 @@ class Mine(object):
         self._detection_lock_b = False
         self._id_counter_a = 0
         self._id_counter_b = 0
-        self._rqt_mine_location = Int8MultiArray()
+        self._rqt_mine_location = Int16MultiArray()
         self._rqt_mine_x = 0.0
         self._rqt_mine_y = 0.0
         self._rqt_mine_type = 0
+        self._surface_error = []
+        self._surface_error_counter = 0
 
     # comment out when testing with a real robot
-    def joy_callback(self, data):
+    '''def joy_callback(self, data):
         self._a = data.buttons[0]
         self._b = data.buttons[1]
         if self._a == 0:
             self._detection_lock_a = False
         if self._b == 0:
             self._detection_lock_b = False
+    '''
 
     def coil_callback(self, data):
-        if data.data == 1:
+        if data.data == 2:
             self._a = 1
             self._b = 0
-        elif data.data == 2:
+        elif data.data == 1:
             self._b = 1
             self._a = 0
         else:
@@ -54,18 +57,19 @@ class Mine(object):
             self._detection_lock_a = False
         if self._b == 0:
             self._detection_lock_b = False
+        rospy.loginfo(data.data)
 
     def odom_callback(self, data):
         self._rqt_mine_x = int(abs(data.position.x))
         self._rqt_mine_y = int(abs(data.position.y))
-        if self._a == 1 and not self._detection_lock_a:
+        if self._a == 1 and self._b == 0 and not self._detection_lock_a:
             self._id_counter_a += 1
             self._marker_location_a = data
             self._rqt_mine_type = 1
             self._rqt_mine_location.data = (self._rqt_mine_x, self._rqt_mine_y, self._rqt_mine_type)
             self._rqt_mine_pub.publish(self._rqt_mine_location)
             self._detection_lock_a = True
-        elif self._b and not self._detection_lock_b:
+        elif self._b and self._a == 0 and not self._detection_lock_b:
             self._id_counter_b += 1
             self._marker_location_b = data
             self._rqt_mine_type = -1
@@ -123,6 +127,7 @@ class Mine(object):
 
 def main():
     marker_server = Mine()
+    rospy.loginfo(marker_server._a)
     marker_server.marker()
 
 

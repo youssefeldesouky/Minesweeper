@@ -12,8 +12,8 @@ diff_drive:
   wheel_separation_multiplier: 1.0
   wheel_radius_multiplier: 1.0
   enable_odom_tf: false
-  wheel_radius: 0.165
-  wheel_separation: 0.530
+  wheel_radius: 0.18
+  wheel_separation: 0.661
   cmd_vel_timeout: 0.25
   base_frame_id: base_link
   linear:
@@ -21,7 +21,7 @@ diff_drive:
       has_velocity_limits: true
       max_velocity: 2.5
       has_acceleration_limits: true
-      max_acceleration: 10
+      max_acceleration: 15
   angular:
     z:
       has_velocity_limits: true

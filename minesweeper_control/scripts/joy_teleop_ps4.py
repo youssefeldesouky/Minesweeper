@@ -37,7 +37,7 @@ class Controller(object):
         self._max_angular_speed = 1.0
         self._dpad_y = 0.0
         self._dpad_x = 0.0
-        self._inverted_right_stick_x = 1  # for profile 1
+        self._inverted_right_stick_x = -1  # for profile 1
         self._inverted_left_stick_x = -1  # for profile 2
         self._inverted_left_stick_crane = 1 # for crane profile
         self._r3 = 1
@@ -173,6 +173,20 @@ class Controller(object):
             self._magnet_lock = False
         self._crane_states.data = (self._servo_states[self._servo_state], self._magnet_state, self._dc_state)
 
+        if -0.04 <= self._left_stick_y <= 0.04:
+            self._left_stick_y = 0.0
+        if -0.05 <= self._right_stick_x <= 0.05:
+            self._right_stick_x = 0.0
+        if self._r3 != 0:
+            if not self._inverted_angular_lock:
+                self._inverted_right_stick_x = self._inverted_right_stick_x * -1
+                self._inverted_angular_lock = True
+        else:
+            self._inverted_angular_lock = False
+
+        self._velocity.linear.x = self._left_stick_y * 1.2
+        self._velocity.angular.z = self._right_stick_x * 5.0
+
 
     def speed_limits(self):
         if self._dpad_y != 0.0:
@@ -246,7 +260,7 @@ class Controller(object):
                 self.profile_2()
             elif self._profile == 3:
                 self.profile_crane()
-            self.stop()
+            #self.stop()
             self._pub.publish(self._velocity)
             self.sign_publisher()
             self.stats()

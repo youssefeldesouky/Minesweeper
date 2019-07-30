@@ -6,6 +6,6 @@
     args="4 minesweeper_rviz viz.launch"
     name="timed_rviz" output="screen" />
   <node pkg="timed_roslaunch" type="timed_roslaunch.sh"
-    args="3 minesweeper_control teleop.launch"
+    args="3 minesweeper_control teleop_ps4.launch"
     name="timed_teleop" output="screen" />
 </launch>

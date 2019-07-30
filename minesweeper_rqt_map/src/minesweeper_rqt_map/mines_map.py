@@ -1,7 +1,7 @@
 import os
 import rospy
 import rospkg
-from std_msgs.msg import Int8MultiArray
+from std_msgs.msg import Int16MultiArray
 
 from qt_gui.plugin import Plugin
 from python_qt_binding import loadUi
@@ -27,8 +27,8 @@ class MapPlugin(Plugin):
             print 'arguments: ', args
             print 'unknowns: ', unknowns
 
-        self._mine_location_sub = rospy.Subscriber('rqt_mine_location', Int8MultiArray, self.mine_callback)
-        self._mine_location = Int8MultiArray()
+        self._mine_location_sub = rospy.Subscriber('rqt_mine_location', Int16MultiArray, self.mine_callback)
+        self._mine_location = Int16MultiArray()
         self._black_color = QBrush(QColor(0, 0, 0))
         self._gray_color = QBrush(QColor(150, 150, 150))
         self._buried_items = []
@@ -87,6 +87,9 @@ class MapPlugin(Plugin):
                     if b == self._widget.surface_list.item(i).text().lower():
                         break
                 else:
+                    '''for j in range(0, self._widget.buried_list.count()):
+                        if b == self._widget.buried_list.item(j).text().lower():
+                            del self._widget.buried_list.item(j)'''
                     self._widget.surface_list.addItem(str(b).upper())
             elif self._mine_location.data[2] == -1:
                 x = QTableWidgetItem()

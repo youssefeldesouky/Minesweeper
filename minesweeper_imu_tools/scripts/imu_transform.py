@@ -26,7 +26,7 @@ def test():
             final_value += area
             pub.publish(final_value)
             old_data = new_data
-        #rospy.loginfo(new_data)
+        rospy.loginfo(new_data)
         rate.sleep()
 
 if __name__ == "__main__":

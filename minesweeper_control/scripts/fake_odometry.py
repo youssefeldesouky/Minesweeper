@@ -8,7 +8,7 @@ class Fake(object):
     def __init__(self):
         rospy.init_node("fake_odometry")
         self._joint_states = Float32MultiArray()
-        self._max_ticks = 300
+        self._max_ticks = 40
         self._left_cmd = 0
         self._right_cmd = 0
         self._l_sign = 1
