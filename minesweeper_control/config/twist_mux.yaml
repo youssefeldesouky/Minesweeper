@@ -1,12 +1,12 @@
 topics:
   -
     name: ps4
-    topic: cmd_vel
+    topic: ps4/cmd_vel
     timeout: 0.5
     priority: 100
   -
     name: xbox
-    topic: cmd_vel
+    topic: xbox/cmd_vel
     timeout: 0.5
     priority: 95
 locks:

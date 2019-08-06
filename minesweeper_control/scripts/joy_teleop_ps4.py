@@ -12,7 +12,7 @@ class Controller(object):
         self._sub = rospy.Subscriber("joy", Joy, self.callback)
         self._timeout_sub = rospy.Subscriber("joy_timeout", Bool, self.timeout_cb)
         self._rate = rospy.Rate(50)
-        self._pub = rospy.Publisher("cmd_vel", Twist, queue_size=10)
+        self._pub = rospy.Publisher("ps4/cmd_vel", Twist, queue_size=10)
         self._stats_pub = rospy.Publisher("controller_stats", ControllerStats, queue_size=10)
         self._stats = ControllerStats()
         self._velocity = Twist()
@@ -47,7 +47,7 @@ class Controller(object):
         self._circle = 0
         self._magnet_state = 0
         self._servo_state = 0
-        self._servo_states = (-1, 0, 1)
+        self._servo_states = (4, 3, 2, 1, 0, -1, -2, -3, -4)
         self._dc_state = 0
         self._profile = 1
         self._linear_lock = False
@@ -71,7 +71,7 @@ class Controller(object):
         self._signs = Int8MultiArray()
 
         self._crane_states = Int8MultiArray()
-        self._crane_states.data = (-1, 0, 0)
+        self._crane_states.data = (-4, 0, 0)
         self._pub_crane = rospy.Publisher("crane", Int8MultiArray, queue_size = 10)
 
     def callback(self, data):
@@ -152,8 +152,8 @@ class Controller(object):
                     self._servo_state += 1
                 if self._servo_state <= 0:
                     self._servo_state = 0
-                elif self._servo_state >= 2:
-                    self._servo_state = 2
+                elif self._servo_state >= 8:
+                    self._servo_state = 8
                 self._servo_angle_lock = True
         else:
             self._servo_angle_lock = False
@@ -184,8 +184,8 @@ class Controller(object):
         else:
             self._inverted_angular_lock = False
 
-        self._velocity.linear.x = self._left_stick_y * 1.2
-        self._velocity.angular.z = self._right_stick_x * 5.0
+        self._velocity.linear.x = self._left_stick_y * 0.8
+        self._velocity.angular.z = self._right_stick_x * 3.0
 
 
     def speed_limits(self):
@@ -260,7 +260,7 @@ class Controller(object):
                 self.profile_2()
             elif self._profile == 3:
                 self.profile_crane()
-            #self.stop()
+            self.stop()
             self._pub.publish(self._velocity)
             self.sign_publisher()
             self.stats()
@@ -278,10 +278,10 @@ class Controller(object):
             if not self._velocity.angular.z:
                 self._l_sign = math.copysign(1, self._velocity.linear.x)
                 self._r_sign = math.copysign(1, self._velocity.linear.x)
-            elif self._velocity.angular.z > 0.0:
+            elif self._velocity.angular.z < 0.0:
                 self._l_sign = math.copysign(1, self._velocity.linear.x)
                 self._r_sign = math.copysign(1, self._velocity.linear.x) * -1.0
-            elif self._velocity.angular.z < 0.0:
+            elif self._velocity.angular.z > 0.0:
                 self._l_sign = math.copysign(1, self._velocity.linear.x) * -1.0
                 self._r_sign = math.copysign(1, self._velocity.linear.x)
         self._signs.data = (self._l_sign, self._r_sign)

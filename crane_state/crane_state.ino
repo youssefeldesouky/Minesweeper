@@ -4,6 +4,7 @@
 
 Servo myservo;
 int angle=0, angle_old = 0;
+uint16_t angle_values[] = {0, 20, 40, 60, 80, 100, 120, 140, 160, 180};
 int magnet=0;
 int dc_motor=0;
 bool angle_lock = false;
@@ -50,13 +51,7 @@ void loop() {
   }
   // put your main code here, to run repeatedly:
   if(!angle_lock){
-    if(angle < 0){
-      myservo.write(0);
-    }else if(angle == 0){
-      myservo.write(90);
-    }else if(angle > 0){
-      myservo.write(180);
-    }
+    myservo.write(angle_values[angle + 4]);
     angle_lock = true;
   }
   if(dc_motor==0)
@@ -92,4 +87,8 @@ void loop() {
   }
   nh.spinOnce();
   delay(20);
+}
+
+uint16_t Servo_val(int angle){
+  
 }

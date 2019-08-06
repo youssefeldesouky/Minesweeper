@@ -2,6 +2,7 @@ import os
 import rospy
 import rospkg
 from minesweeper_msgs.msg import ControllerStats
+from std_msgs.msg import Int8
 
 from qt_gui.plugin import Plugin
 from python_qt_binding import loadUi
@@ -16,7 +17,7 @@ class StatsPlugin(Plugin):
         self.setObjectName('StatsPlugin')
 
         self._stat_sub = rospy.Subscriber("/controller_stats", ControllerStats, self.stats_cb)
-
+        self._stat_ir_sub = rospy.Subscriber("/ir_state", Int8, self.ir_cb)
         # Process standalone plugin command-line arguments
         from argparse import ArgumentParser
         parser = ArgumentParser()
@@ -55,6 +56,10 @@ class StatsPlugin(Plugin):
         self._widget.max_ang.setText(data.max_ang)
         self._widget.cur_lin.setText(data.cur_lin)
         self._widget.cur_ang.setText(data.cur_ang)
+
+    def ir_cb(self, data):
+        state = "ON" if not data.data else "OFF"
+        self._widget.ir.setText(state)
 
     def shutdown_plugin(self):
         # TODO unregister all publishers here

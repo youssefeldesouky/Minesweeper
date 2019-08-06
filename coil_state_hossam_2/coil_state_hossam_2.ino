@@ -1,8 +1,8 @@
 #include <ros.h>
 #include <std_msgs/Int8.h>
 #include <TimerOne.h>
-const uint8_t IND = 4, IR = 5;
-std_msgs::Int8 STATE;
+const uint8_t IND = 4, IR = 8;
+std_msgs::Int8 STATE, IR_STATE;
 ros::NodeHandle nh;
 uint8_t _state;
 volatile uint8_t coil[6]= {0};
@@ -10,6 +10,7 @@ volatile uint8_t counter = 0;
 volatile uint8_t coil_state = 0 ;
 int IR_state = 1 ;
 ros::Publisher coil_pub("coil_state", &STATE);
+ros::Publisher ir_pub("ir_state", &IR_STATE);
 bool lock = false;
 
 void setup() 
@@ -18,6 +19,7 @@ void setup()
   pinMode(IR, INPUT_PULLUP);
   nh.initNode();
   nh.advertise(coil_pub);
+  nh.advertise(ir_pub);
   Timer1.initialize(200000);
   Timer1.attachInterrupt(Coil_read);
   //Serial.begin(9600);
@@ -61,7 +63,9 @@ void loop()
     _state = 0;
   }*/
   STATE.data = _state;
+  IR_STATE.data = IR_state;
   coil_pub.publish(&STATE);
+  ir_pub.publish(&IR_STATE);
   nh.spinOnce();
 
 

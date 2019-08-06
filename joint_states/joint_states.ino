@@ -1,13 +1,13 @@
-#include <ros.h>
+ #include <ros.h>
 #include <std_msgs/Int8MultiArray.h>
 #include <std_msgs/Float32MultiArray.h>
 #include <std_msgs/Float32.h>
 #include <std_msgs/Int16.h>
 
 ros::NodeHandle nh;
-const uint8_t L = 2, R = 3;
+const uint8_t L = 19, R = 20;
 int32_t l_ticks, r_ticks;
-const uint16_t maxTicks = 31;  //PPR
+const uint16_t maxTicks = 84;  //PPR
 double l_pos, r_pos;
 int8_t l_sign = 1, r_sign = 1;
 
@@ -25,8 +25,8 @@ void setup() {
   // put your setup code here, to run once:
   pinMode(L, INPUT_PULLUP);
   pinMode(R, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(L), leftENC, RISING);
-  attachInterrupt(digitalPinToInterrupt(R), rightENC, RISING);
+  attachInterrupt(digitalPinToInterrupt(L), leftENC, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(R), rightENC, CHANGE);
   nh.initNode();
   nh.subscribe(sign_sub);
   joint_states.data_length = 4;

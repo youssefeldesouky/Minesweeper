@@ -34,7 +34,7 @@
     </gazebo>
     <link name="imu_link"/>
     <joint name="imu_joint" type="fixed">
-      <origin xyz="0.0 0.0 0.075" rpy="0.0 0.0 0.0"/>
+      <origin xyz="-0.05 0.0 0.03118" rpy="0.0 0.0 0.0"/>
       <parent link="base_link"/>
       <child link="imu_link"/>
     </joint>
@@ -49,29 +49,25 @@
     <link name="coil_link">
         <visual>
             <geometry>
-                <mesh filename="package://minesweeper_description/meshes/coil.dae"/>
+                <mesh filename="package://minesweeper_description/meshes/coil_link.STL"/>
             </geometry>
+            <material name="gray">
+              <color rgba="0.8 0.8 0.8 1" />
+            </material>
         </visual>
     </link>
     <joint name="coil" type="fixed">
         <parent link="base_link"/>
         <child link="coil_link"/>
-        <origin xyz="0.355 0.0 0.04"/>
-    </joint>pose
-    <gazebo reference="coil_link">
-      <visual name="base_link_visual">
-          <material>
-            <script>Gazebo/WoodPallet</script>
-            <ambient>0.25 0.25 0.25 1.0</ambient>
-          </material>
-      </visual>
-    </gazebo>
+        <origin xyz="0.2165 0.0 0.04" rpy="0.0 0.0 -1.57079"/>
+    </joint>
+
     <link name="coil_center_link">
     </link>
     <joint name="coil_center" type="fixed">
         <parent link="coil_link"/>
         <child link="coil_center_link"/>
-        <origin xyz="0.290 0.0 -0.1"/> <!--it was 0.190 in the x-->
+        <origin xyz="0.0 0.307 -0.1"/> <!--it was 0.190 in the x-->
     </joint>
     <xacro:wheel prefix="front_left" angle="0.0">
       <origin xyz="0.15 0.2105 0.03118"/>
@@ -96,11 +92,11 @@
         <updateRate>50.0</updateRate>
         <bodyName>imu_link</bodyName>
         <topicName>imu/data</topicName>
-        <accelDrift>0.001 0.001 0.001</accelDrift>
-        <accelGaussianNoise>0.001 0.001 0.001</accelGaussianNoise>
-        <rateDrift>0.001 0.001 0.001</rateDrift>
-        <rateGaussianNoise>0.001 0.001 0.001</rateGaussianNoise>
-        <headingDrift>0.001</headingDrift>
+        <accelDrift>0.005 0.005 0.005</accelDrift>
+        <accelGaussianNoise>0.005 0.005 0.005</accelGaussianNoise>
+        <rateDrift>0.005 0.005 0.005</rateDrift>
+        <rateGaussianNoise>0.005 0.005 0.005</rateGaussianNoise>
+        <headingDrift>0.005</headingDrift>
         <headingGaussianNoise>0.001</headingGaussianNoise>
       </plugin>
     </gazebo>

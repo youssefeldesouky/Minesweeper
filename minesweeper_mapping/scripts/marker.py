@@ -13,7 +13,7 @@ class Mine(object):
         rospy.init_node("marker", anonymous=False)
         self._a = 0
         self._b = 0
-        #self._joy_sub = rospy.Subscriber("/joy", Joy, self.joy_callback)
+        self._joy_sub = rospy.Subscriber("/joy", Joy, self.joy_callback)
         self._coil_sub = rospy.Subscriber("/coil_state", Int8, self.coil_callback)
         self._odom_sub = rospy.Subscriber("/coil_tf", Pose, self.odom_callback)
         self._rqt_mine_pub = rospy.Publisher("/rqt_mine_location", Int16MultiArray, queue_size=10)
@@ -35,14 +35,13 @@ class Mine(object):
         self._surface_error_counter = 0
 
     # comment out when testing with a real robot
-    '''def joy_callback(self, data):
+    def joy_callback(self, data):
         self._a = data.buttons[0]
         self._b = data.buttons[1]
         if self._a == 0:
             self._detection_lock_a = False
         if self._b == 0:
             self._detection_lock_b = False
-    '''
 
     def coil_callback(self, data):
         if data.data == 2:
@@ -60,8 +59,8 @@ class Mine(object):
         rospy.loginfo(data.data)
 
     def odom_callback(self, data):
-        self._rqt_mine_x = int(abs(data.position.x))
-        self._rqt_mine_y = int(abs(data.position.y))
+        self._rqt_mine_x = int((data.position.x))
+        self._rqt_mine_y = int(-1 * (data.position.y))
         if self._a == 1 and self._b == 0 and not self._detection_lock_a:
             self._id_counter_a += 1
             self._marker_location_a = data

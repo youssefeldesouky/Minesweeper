@@ -2,19 +2,14 @@
   <arg name="offset" default="[0.0, 0.0, 0.0]"/>
   <include file="$(find minesweeper_description)/launch/description.launch"/>
   <rosparam command="load" file="$(find minesweeper_control)/config/control.yaml"/>
-  <node name="ekf" pkg="robot_localization" type="ekf_localization_node">
+  <node name="ukf" pkg="robot_localization" type="ukf_localization_node">
     <rosparam command="load" file="$(find minesweeper_control)/config/kalman.yaml"/>
   </node>
-<!--<node name="imutransformer" pkg="imu_transformer" type="imu_transformer_node">
-    <remap from="imu_in/data" to="imu/data"/>
-    <remap from="imu_out/data" to="imu/data"/>
-    <param name="target_frame" value="odom"/>
-  </node>-->
-  <node pkg="tf2_ros" type="static_transform_publisher" name="imu_trans" args="0.375 0.0 0.075 0.0 0.0 0.0 imu_link base_link"/>
-  <!--<rosparam command="load" file="$(find minesweeper_control)/config/gazebo_interface.yaml"/>-->
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="imu_trans" args="0.0 0.0 0.03118 0.0 0.0 0.0 imu_link base_link"/>
   <node name="spawner" pkg="controller_manager" type="spawner" args="joint_state diff_drive"/>
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
-  <node name="imu_offset" pkg="minesweeper_control" type="orientation_offset.py">
+  <node name="imu_offset" pkg="minesweeper_control" type="orientation_offset.py" output="screen">
       <rosparam param="offset" subst_value="True">$(arg offset)</rosparam>
   </node>
   <node pkg="twist_mux" type="twist_mux" name="twist_mux">
@@ -22,5 +17,4 @@
     <remap from="cmd_vel_out" to="diff_drive/cmd_vel"/>
   </node>
   <node pkg="minesweeper_control" type="joy_timeout.py" name="joy_timeout"/>
-  <!--include file="$(find minesweeper_mapping)/launch/map.launch"/>-->
 </launch>

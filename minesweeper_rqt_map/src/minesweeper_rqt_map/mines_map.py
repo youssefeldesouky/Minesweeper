@@ -79,7 +79,7 @@ class MapPlugin(Plugin):
 
     def listen(self):
         if self._mine_location.data[2] != 0:
-            if self._mine_location.data[2] == 1:
+            if self._mine_location.data[2] == 1 and self._mine_location.data[0] >= 0 and self._mine_location.data[1] >= 0:
                 x = QTableWidgetItem()
                 x.setBackground(self._gray_color)
                 b = "{0}{1}".format(self._alphabet[self._mine_location.data[1]], self._mine_location.data[0] + 1)
@@ -87,20 +87,27 @@ class MapPlugin(Plugin):
                     if b == self._widget.surface_list.item(i).text().lower():
                         break
                 else:
-                    '''for j in range(0, self._widget.buried_list.count()):
+                    for j in range(0, self._widget.buried_list.count()):
                         if b == self._widget.buried_list.item(j).text().lower():
-                            del self._widget.buried_list.item(j)'''
+                            self._widget.buried_list.takeItem(j)
                     self._widget.surface_list.addItem(str(b).upper())
-            elif self._mine_location.data[2] == -1:
+                    self._widget.map.setItem(19 - self._mine_location.data[0] - 1, self._mine_location.data[1] + 1, x)
+
+            elif self._mine_location.data[2] == -1 and self._mine_location.data[0] >= 0 and self._mine_location.data[1] >= 0:
                 x = QTableWidgetItem()
                 x.setBackground(self._black_color)
                 b = "{0}{1}".format(self._alphabet[self._mine_location.data[1]], self._mine_location.data[0] + 1)
-                for i in range(0, self._widget.buried_list.count()):
-                    if b == self._widget.buried_list.item(i).text().lower():
+                for i in range(0, self._widget.surface_list.count()):
+                    if b == self._widget.surface_list.item(i).text().lower():
                         break
                 else:
-                    self._widget.buried_list.addItem(str(b).upper())
-            self._widget.map.setItem(19 - self._mine_location.data[0] - 1, self._mine_location.data[1] + 1, x)
+                    for i in range(0, self._widget.buried_list.count()):
+                        if b == self._widget.buried_list.item(i).text().lower():
+                            break
+                    else:
+                        self._widget.buried_list.addItem(str(b).upper())
+                        self._widget.map.setItem(19 - self._mine_location.data[0] - 1, self._mine_location.data[1] + 1, x)
+            #self._widget.map.setItem(19 - self._mine_location.data[0] - 1, self._mine_location.data[1] + 1, x)
             self._widget.total_sum.display(self._widget.buried_list.count() + self._widget.surface_list.count())
             self._widget.total_sum.setFrameStyle(2)
     def shutdown_plugin(self):

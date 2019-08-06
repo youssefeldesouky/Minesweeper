@@ -12,7 +12,7 @@ class Controller(object):
         self._sub = rospy.Subscriber("joy", Joy, self.callback)
         self._timeout_sub = rospy.Subscriber("joy_timeout", Bool, self.timeout_cb)
         self._rate = rospy.Rate(50)
-        self._pub = rospy.Publisher("cmd_vel", Twist, queue_size=10)
+        self._pub = rospy.Publisher("xbox/cmd_vel", Twist, queue_size=10)
         self._stats_pub = rospy.Publisher("controller_stats", ControllerStats, queue_size=10)
         self._stats = ControllerStats()
         self._velocity = Twist()

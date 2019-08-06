@@ -6,5 +6,5 @@
     <param name="dev" type="string" value="$(arg port)"/>
     <param name="autorepeat_rate" type="double" value="50"/>
   </node>
-  <remap from="cmd_vel" to="diff_drive/cmd_vel"/>
+  <remap from="xbox/cmd_vel" to="diff_drive/cmd_vel"/>
 </launch>
