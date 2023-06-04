@@ -1,0 +1,15 @@
+<launch>
+  <node pkg="timed_roslaunch" type="timed_roslaunch.sh"
+    args="2 minesweeper_control control.launch"
+    name="timed_control" output="screen" />
+  <node pkg="timed_roslaunch" type="timed_roslaunch.sh"
+    args="4 minesweeper_rviz viz.launch"
+    name="timed_rviz" output="screen" />
+  <node pkg="timed_roslaunch" type="timed_roslaunch.sh"
+    args="3 minesweeper_control teleop_ps4.launch"
+    name="timed_teleop" output="screen" />
+  <node pkg="timed_roslaunch" type="timed_roslaunch.sh"
+    args="3 minesweeper_mapping map.launch"
+    name="timed_map" output="screen" />
+  <node pkg="rqt_gui" type="rqt_gui" name="rqt_diagnostics"/>
+</launch>

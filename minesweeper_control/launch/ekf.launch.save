@@ -1,0 +1,5 @@
+<launch>
+	<node pkg="robot_pose_ekf" type="robot_pose_ekf" name="ekf">
+		<param name="output_frame" value="odom"/>
+		<param name="freq" value="50"/>
+		<param nak</launch>

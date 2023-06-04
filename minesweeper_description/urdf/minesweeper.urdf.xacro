@@ -1,49 +1,103 @@
 <?xml version="1.0"?>
-<robot name="wheel" xmlns:xacro="https://github.com/zoidberg2010eaf/minesweeper">
+<robot name="minesweeper" xmlns:xacro="http://www.ros.org/wiki/xacro">
     <xacro:arg name="robot_namespace" default="/" />
     <xacro:include filename="$(find minesweeper_description)/urdf/wheel.urdf.xacro"/>
     <link name="base_link">
       <inertial>
-        <origin xyz="0.0 0.0 0.05045" rpy="0 0 0" />
-        <mass value="23.176" />
+        <origin xyz="0.0 0.0 -0.07796" rpy="0.0 0.0 0.0"/>
+        <mass value="20.25"/>
         <inertia ixx="0.6022" ixy="-0.02364" ixz="-0.1197" iyy="1.7386" iyz="-0.001544" izz="2.0296" />
       </inertial>
       <visual>
         <geometry>
           <mesh filename="package://minesweeper_description/meshes/base_link.STL" />
         </geometry>
-        <material name="yellow">
-          <color rgba="1.0 0.8 0.0 1" />
+        <material name="beige">
+          <color rgba="0.91 0.815 0.592 1" />
         </material>
       </visual>
       <collision>
         <geometry>
-          <box size="0.75 0.50 0.15"/>
+          <box size=".77689 0.422 0.15592"/>
         </geometry>
-        <origin xyz="0.0 0.0 0.075"/>
+        <origin xyz="0.0 0.0 0.07796"/>
       </collision>
     </link>
+    <gazebo reference="base_link">
+      <visual name="base_link_visual">
+          <material>
+              <diffuse>0.91 0.815 0.592 1.0</diffuse>
+              <specular>0.91 0.815 0.592 1.0</specular>
+              <ambient>0.91 0.815 0.592 1.0</ambient>
+          </material>
+      </visual>
+    </gazebo>
+    <link name="imu_link"/>
+    <joint name="imu_joint" type="fixed">
+      <origin xyz="-0.05 0.0 0.03118" rpy="0.0 0.0 0.0"/>
+      <parent link="base_link"/>
+      <child link="imu_link"/>
+    </joint>
+    <gazebo reference="imu_link">
+    </gazebo>
     <link name="base_footprint"/>
     <joint name="base_footprint_joint" type="fixed">
       <origin xyz="0 0 0" rpy="0 0 0" />
       <parent link="base_link" />
       <child link="base_footprint" />
     </joint>
+    <link name="coil_link">
+        <visual>
+            <geometry>
+                <mesh filename="package://minesweeper_description/meshes/coil_link.STL"/>
+            </geometry>
+            <material name="gray">
+              <color rgba="0.8 0.8 0.8 1" />
+            </material>
+        </visual>
+    </link>
+    <joint name="coil" type="fixed">
+        <parent link="base_link"/>
+        <child link="coil_link"/>
+        <origin xyz="0.2165 0.0 0.04" rpy="0.0 0.0 -1.57079"/>
+    </joint>
+
+    <link name="coil_center_link">
+    </link>
+    <joint name="coil_center" type="fixed">
+        <parent link="coil_link"/>
+        <child link="coil_center_link"/>
+        <origin xyz="0.0 0.307 -0.1"/> <!--it was 0.190 in the x-->
+    </joint>
     <xacro:wheel prefix="front_left" angle="0.0">
-      <origin xyz="0.181 0.320 0.025"/>
+      <origin xyz="0.15 0.2105 0.03118"/>
     </xacro:wheel>
     <xacro:wheel prefix="front_right" angle="180.0">
-      <origin xyz="0.181 -0.320 0.025"/>
+      <origin xyz="0.15 -0.2105 0.03118"/>
     </xacro:wheel>
     <xacro:wheel prefix="rear_left" angle="0.0">
-      <origin xyz="-0.181 0.320 0.025"/>
+      <origin xyz="-0.205 0.2105 0.03118"/>
     </xacro:wheel>
     <xacro:wheel prefix="rear_right" angle="180.0">
-      <origin xyz="-0.181 -0.320 0.025"/>
+      <origin xyz="-0.205 -0.2105 0.03118"/>
     </xacro:wheel>
     <gazebo>
       <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
         <robotNamespace>$(arg robot_namespace)</robotNamespace>
+      </plugin>
+    </gazebo>
+    <gazebo>
+      <plugin name="imu_controller" filename="libhector_gazebo_ros_imu.so">
+        <robotNamespace>$(arg robot_namespace)</robotNamespace>
+        <updateRate>50.0</updateRate>
+        <bodyName>imu_link</bodyName>
+        <topicName>imu/data</topicName>
+        <accelDrift>0.005 0.005 0.005</accelDrift>
+        <accelGaussianNoise>0.005 0.005 0.005</accelGaussianNoise>
+        <rateDrift>0.005 0.005 0.005</rateDrift>
+        <rateGaussianNoise>0.005 0.005 0.005</rateGaussianNoise>
+        <headingDrift>0.005</headingDrift>
+        <headingGaussianNoise>0.001</headingGaussianNoise>
       </plugin>
     </gazebo>
 </robot>
